@@ -1,0 +1,20 @@
+import { Router } from "express";
+
+import {
+  login,
+  signup,
+  logout,
+  deleteAdmin,
+} from "../controllers/adminController.js";
+// import { verifyToken } from "../utils/jwt.js";
+
+const adminRouter = Router();
+
+adminRouter.post("/signup", signup);
+adminRouter.post("/login", login);
+adminRouter.get("/logout", logout);
+
+// adminRouter.use(verifyToken);
+// adminRouter.get("/history/:timeFrame?", getadminHistory);
+adminRouter.delete("/:id", deleteAdmin);
+export default adminRouter;
