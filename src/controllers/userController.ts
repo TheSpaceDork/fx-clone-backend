@@ -29,9 +29,7 @@ export const signup = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const body = req.body;
-    const user = await User.findOne({ email: body.email }).select(
-      "password verified "
-    );
+    const user = await User.findOne({ email: body.email }).select("password");
     if (!user) {
       return res
         .status(400)
@@ -74,6 +72,15 @@ export const deleteUser = async (req: Request, res: Response) => {
   try {
     const deleted = await User.findByIdAndDelete(req.params.id);
     return res.json(SuccessResponse("Account deleted"));
+  } catch (err) {
+    return res.status(400).json(ErrorResponse(err));
+  }
+};
+
+export const verifyUser = async (req: Request, res: Response) => {
+  try {
+    // const deleted = await User.findByIdAndDelete(req.params.id);
+    // return res.json(SuccessResponse("Account deleted"));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }
