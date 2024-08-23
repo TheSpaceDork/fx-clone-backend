@@ -29,9 +29,7 @@ export const signup = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const body = req.body;
-    const user = await User.findOne({ email: body.email }).select(
-      "password verified "
-    );
+    const user = await User.findOne({ email: body.email }).select("password");
     if (!user) {
       return res
         .status(400)
@@ -70,10 +68,38 @@ export const logout = async (req: Request, res: Response) => {
     return res.status(400).json(ErrorResponse(err));
   }
 };
+
+export const getUser = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      return res
+        .status(StatusCodes.BadRequest)
+        .json(ErrorResponse("Please provide an Id"));
+    }
+    const user = await User.findById(id);
+    if (!user)
+      return res
+        .status(StatusCodes.NotFound)
+        .json(ErrorResponse("User not found"));
+    return res.status(StatusCodes.Accepted).json(SuccessResponse(user));
+  } catch (err) {
+    return res.status(400).json(ErrorResponse(err));
+  }
+};
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const deleted = await User.findByIdAndDelete(req.params.id);
     return res.json(SuccessResponse("Account deleted"));
+  } catch (err) {
+    return res.status(400).json(ErrorResponse(err));
+  }
+};
+
+export const verifyUser = async (req: Request, res: Response) => {
+  try {
+    // const deleted = await User.findByIdAndDelete(req.params.id);
+    // return res.json(SuccessResponse("Account deleted"));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }
