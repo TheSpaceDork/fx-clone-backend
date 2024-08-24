@@ -27,6 +27,10 @@ const userSchema = new Schema<IUser>(
       trim: true,
       required: true,
     },
+    country: {
+      type: String,
+      trim: true,
+    },
     socialAccounts: {},
     password: {
       type: String,
