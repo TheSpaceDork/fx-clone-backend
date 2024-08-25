@@ -10,12 +10,12 @@ export const signToken = (id, res) => {
         expiresIn: "1y",
     });
     res.cookie("accessToken", accessToken, {
-        secure: true,
+        secure: false,
         httpOnly: true,
         partitioned: true,
     });
     res.cookie("refreshToken", refreshToken, {
-        secure: true,
+        secure: false,
         httpOnly: true,
         partitioned: true,
     });
@@ -45,15 +45,20 @@ export const verifyToken = (req, res, next) => {
         next();
     });
 };
-export const getUserFromToken = (req, res, next) => {
-    const token = req.cookies.accessToken;
-    if (token) {
-        jwt.verify(token, process.env.JWT_ACCESS_SECRET, async (err, decoded) => {
+export const getUserFromToken = async (req, res, next) => {
+    try {
+        const token = req.cookies.accessToken;
+        console.log(token);
+        if (token) {
+            const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
             if (decoded && decoded?.id) {
                 req.user = await User.findById(decoded.id);
             }
-            return next();
-        });
+            console.log(req.user, decoded);
+        }
+        return next();
     }
-    return next();
+    catch (err) {
+        return next();
+    }
 };

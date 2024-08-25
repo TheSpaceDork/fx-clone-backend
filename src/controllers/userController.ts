@@ -20,7 +20,7 @@ export const signup = async (req: Request, res: Response) => {
     const newUser = new User({ ...body });
 
     await newUser.save();
-    const { _id, ...user } = newUser.toJSON();
+    const { _id, password, ...user } = newUser.toJSON();
     return res.json(SuccessResponse({ ...user }));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
@@ -48,8 +48,9 @@ export const login = async (req: Request, res: Response) => {
 
     user.refreshToken = refreshToken;
     await user.save();
-    const { _id, ...others } = user.toJSON();
-    return res.json(SuccessResponse({ ...others }));
+    return res.json(
+      SuccessResponse("Logged in using cookies again it'll work this time")
+    );
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }
@@ -74,11 +75,14 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    if (!req.user)
+    console.log("wtf", req.user);
+    if (!req.user) {
+      console.log("why");
       return res
         .status(StatusCodes.NotFound)
         .json(ErrorResponse("User not found"));
-    return res.status(StatusCodes.Accepted).json(SuccessResponse(req.user));
+    }
+    return res.status(StatusCodes.Success).json(SuccessResponse(req.user));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }
@@ -99,13 +103,18 @@ export const verifyUser = async (req: Request, res: Response) => {
         .status(StatusCodes.NotFound)
         .json(ErrorResponse("User not found"));
     }
-    const user = (
-      req.user as Document<unknown, {}, IUser> &
-        IUser & {
-          _id: Types.ObjectId;
-        }
-    ).updateOne(req.body, { returnDocument: "after" });
-    return res.status(StatusCodes.Accepted).json(SuccessResponse(user));
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { ...req.body, verified: true },
+      { returnDocument: "after" }
+    );
+    if (user) {
+      console.log(user);
+      const { id, password, ...others } = user.toJSON();
+      return res
+        .status(StatusCodes.Success)
+        .json(SuccessResponse({ ...others }));
+    }
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }

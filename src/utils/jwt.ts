@@ -19,12 +19,12 @@ export const signToken = (id: Types.ObjectId, res: Response) => {
     expiresIn: "1y",
   });
   res.cookie("accessToken", accessToken, {
-    secure: true,
+    secure: false,
     httpOnly: true,
     partitioned: true,
   });
   res.cookie("refreshToken", refreshToken, {
-    secure: true,
+    secure: false,
     httpOnly: true,
     partitioned: true,
   });
@@ -61,19 +61,23 @@ export const verifyToken = (
   });
 };
 
-export const getUserFromToken = (
+export const getUserFromToken = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token: string | undefined = req.cookies.accessToken;
-  if (token) {
-    jwt.verify(token, process.env.JWT_ACCESS_SECRET!, async (err, decoded) => {
+  try {
+    const token: string | undefined = req.cookies.accessToken;
+    console.log(token);
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
       if (decoded && (decoded as { id: any })?.id) {
         req.user = await User.findById((decoded as { id: any }).id);
       }
-      return next();
-    });
+      console.log(req.user, decoded);
+    }
+    return next();
+  } catch (err) {
+    return next();
   }
-  return next();
 };
