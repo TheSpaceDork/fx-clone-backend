@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User, { IUser } from "../models/User.js";
 import { Request, Response } from "express";
 import {
   ErrorResponse,
@@ -7,6 +7,7 @@ import {
 } from "../utils/response.js";
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { signToken } from "../utils/jwt.js";
+import { Document, Types } from "mongoose";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -73,18 +74,11 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
-    if (!id) {
-      return res
-        .status(StatusCodes.BadRequest)
-        .json(ErrorResponse("Please provide an Id"));
-    }
-    const user = await User.findById(id);
-    if (!user)
+    if (!req.user)
       return res
         .status(StatusCodes.NotFound)
         .json(ErrorResponse("User not found"));
-    return res.status(StatusCodes.Accepted).json(SuccessResponse(user));
+    return res.status(StatusCodes.Accepted).json(SuccessResponse(req.user));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }
@@ -100,17 +94,17 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const verifyUser = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
-    if (!id) {
-      return res
-        .status(StatusCodes.BadRequest)
-        .json(ErrorResponse("Please provide an Id"));
-    }
-    const user = await User.findByIdAndUpdate(id, req.body);
-    if (!user)
+    if (!req.user) {
       return res
         .status(StatusCodes.NotFound)
         .json(ErrorResponse("User not found"));
+    }
+    const user = (
+      req.user as Document<unknown, {}, IUser> &
+        IUser & {
+          _id: Types.ObjectId;
+        }
+    ).updateOne(req.body, { returnDocument: "after" });
     return res.status(StatusCodes.Accepted).json(SuccessResponse(user));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
