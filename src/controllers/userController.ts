@@ -20,8 +20,11 @@ export const signup = async (req: Request, res: Response) => {
     const newUser = new User({ ...body });
 
     await newUser.save();
-    const { _id, password, ...user } = newUser.toJSON();
-    return res.json(SuccessResponse({ ...user }));
+    const { refreshToken, accessToken } = signToken(newUser.id, res);
+
+    newUser.refreshToken = refreshToken;
+    await newUser.save();
+    return res.json(SuccessResponse({ accessToken }));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }
