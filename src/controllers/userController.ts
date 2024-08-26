@@ -8,6 +8,7 @@ import {
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { signToken } from "../utils/jwt.js";
 import { Document, Types } from "mongoose";
+import Transaction from "../models/transaction.js";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -76,14 +77,25 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    console.log("wtf", req.user);
     if (!req.user) {
-      console.log("why");
       return res
         .status(StatusCodes.NotFound)
         .json(ErrorResponse("User not found"));
     }
     return res.status(StatusCodes.Success).json(SuccessResponse(req.user));
+  } catch (err) {
+    return res.status(400).json(ErrorResponse(err));
+  }
+};
+export const getUserHistory = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res
+        .status(StatusCodes.NotFound)
+        .json(ErrorResponse("User not found"));
+    }
+    const history = await Transaction.find({ userId: req.user.id });
+    return res.status(StatusCodes.Success).json(SuccessResponse(history));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }

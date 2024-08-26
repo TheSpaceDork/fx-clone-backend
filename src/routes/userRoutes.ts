@@ -6,6 +6,7 @@ import {
   getUser,
   deleteUser,
   verifyUser,
+  getUserHistory,
 } from "../controllers/userController.js";
 // import { verifyToken } from "../utils/jwt.js";
 
@@ -209,6 +210,7 @@ userRouter.post("/verify", verifyUser);
  *         description: Returns a mysterious string.
  */
 userRouter.get("/", getUser);
+userRouter.get("/history", getUserHistory);
 userRouter.get("/logout", logout);
 
 // userRouter.use(verifyToken);

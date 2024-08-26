@@ -1,17 +1,33 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 const TransactionSchema = new Schema({
-  name: {
+  type: {
     type: String,
     required: true,
   },
-  action: {
+  method: {
     type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    required: true,
+  },
+  narration: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: Date,
     required: true,
   },
   amount: {
     type: Number,
     required: true,
+  },
+  userId: {
+    ref: "User",
+    type: Schema.Types.ObjectId,
   },
 });
 
