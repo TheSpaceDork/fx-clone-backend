@@ -4,7 +4,7 @@ export interface IUser {
   id?: string;
   fullName: string;
   username: string;
-  country: string;
+  country: any;
   email: string;
   socialAccounts: { [key: string]: string }[];
   password: string;
@@ -32,10 +32,7 @@ const userSchema = new Schema<IUser>(
       trim: true,
       required: true,
     },
-    country: {
-      type: String,
-      trim: true,
-    },
+    country: {},
     socialAccounts: {},
     password: {
       type: String,

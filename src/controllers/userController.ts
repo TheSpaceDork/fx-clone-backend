@@ -44,13 +44,11 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json(ErrorResponse("Wrong credentials"));
     }
 
-    const { refreshToken } = signToken(user.id, res);
+    const { refreshToken, accessToken } = signToken(user.id, res);
 
     user.refreshToken = refreshToken;
     await user.save();
-    return res.json(
-      SuccessResponse("Logged in using cookies again it'll work this time")
-    );
+    return res.json(SuccessResponse({ accessToken }));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
   }

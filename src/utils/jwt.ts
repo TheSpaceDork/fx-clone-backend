@@ -1,10 +1,4 @@
-import type {
-  NextFunction,
-  Request,
-  RequestHandler,
-  RequestParamHandler,
-  Response,
-} from "express";
+import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Types } from "mongoose";
 import { StatusCodes, ErrorResponse } from "./response.js";
@@ -40,7 +34,7 @@ export const verifyToken = (
     next();
   }
 
-  const token: string | undefined = req.cookies.accessToken;
+  const token: string | undefined = req.headers.authorization?.split(" ")[1];
   if (!token) {
     return res.status(400).json(ErrorResponse("Token not found"));
   }
@@ -67,7 +61,7 @@ export const getUserFromToken = async (
   next: NextFunction
 ) => {
   try {
-    const token: string | undefined = req.cookies.accessToken;
+    const token: string | undefined = req.headers.authorization?.split(" ")[1];
     console.log(token);
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
