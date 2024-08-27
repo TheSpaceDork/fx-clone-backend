@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-const TransactionSchema = new Schema({
+const WithdrawalSchema = new Schema({
     type: {
         type: String,
         required: true,
@@ -30,5 +30,5 @@ const TransactionSchema = new Schema({
     },
 });
 // Transaction.index({ name: "text" });
-const Transaction = model("transaction", TransactionSchema);
-export default Transaction;
+const Withdrawal = model("withdrawal", WithdrawalSchema);
+export default Withdrawal;

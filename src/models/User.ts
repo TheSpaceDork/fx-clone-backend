@@ -10,7 +10,23 @@ export interface IUser {
   password: string;
   refreshToken: string;
   verified?: boolean;
-  balance: number;
+  totalBalance: number;
+  totalDeposit: number;
+  totalWithdrawal: number;
+  lastWithdrawal: number;
+  pendingWithdrawal: number;
+  earnings: number;
+  activeDeposit: number;
+  lastDeposit: number;
+  gender: string;
+  dob: Date;
+  age: number;
+  maritalStatus: string;
+  contact: number;
+  city: string;
+  zipCode: string;
+  address: string;
+  currency: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -47,9 +63,62 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
-    balance: {
+    totalBalance: {
       type: Number,
       default: 0,
+    },
+    activeDeposit: {
+      type: Number,
+      default: 0,
+    },
+    earnings: {
+      type: Number,
+      default: 0,
+    },
+    totalDeposit: {
+      type: Number,
+      default: 0,
+    },
+    totalWithdrawal: {
+      type: Number,
+      default: 0,
+    },
+    lastDeposit: {
+      type: Number,
+      default: 0,
+    },
+    lastWithdrawal: {
+      type: Number,
+      default: 0,
+    },
+    pendingWithdrawal: {
+      type: Number,
+      default: 0,
+    },
+    address: {
+      type: String,
+    },
+    age: {
+      type: Number,
+    },
+    city: {
+      type: String,
+    },
+    contact: {},
+    dob: {
+      type: Date,
+      default: new Date(1990),
+    },
+    gender: {
+      type: String,
+    },
+    maritalStatus: {
+      type: String,
+      default: "single",
+    },
+    zipCode: {
+      type: String,
+      default: "22202",
     },
   },
   { timestamps: true }

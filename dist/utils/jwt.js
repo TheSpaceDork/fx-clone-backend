@@ -48,7 +48,6 @@ export const verifyToken = (req, res, next) => {
 export const getUserFromToken = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
-        console.log(token);
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
             if (decoded && decoded?.id) {
@@ -59,6 +58,7 @@ export const getUserFromToken = async (req, res, next) => {
         return next();
     }
     catch (err) {
+        console.log(err);
         return next();
     }
 };

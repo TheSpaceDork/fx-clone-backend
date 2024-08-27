@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import { ErrorResponse, StatusCodes, SuccessResponse, } from "../utils/response.js";
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { signToken } from "../utils/jwt.js";
+import Transaction from "../models/transaction.js";
 export const signup = async (req, res) => {
     try {
         const body = req.body;
@@ -12,8 +13,8 @@ export const signup = async (req, res) => {
         body.password = await hashPassword(body.password);
         const newUser = new User({ ...body });
         await newUser.save();
-        const { _id, password, ...user } = newUser.toJSON();
-        return res.json(SuccessResponse({ ...user }));
+        const { accessToken } = signToken(newUser.id, res);
+        return res.json(SuccessResponse({ accessToken }));
     }
     catch (err) {
         return res.status(400).json(ErrorResponse(err));
@@ -24,17 +25,13 @@ export const login = async (req, res) => {
         const body = req.body;
         const user = await User.findOne({ username: body.username }).select("password");
         if (!user) {
-            return res
-                .status(400)
-                .json(ErrorResponse("User not found or not verified"));
+            return res.status(400).json(ErrorResponse("User not found"));
         }
         const correctPassword = await comparePassword(body.password, user.password);
         if (!correctPassword) {
             return res.status(400).json(ErrorResponse("Wrong credentials"));
         }
-        const { refreshToken, accessToken } = signToken(user.id, res);
-        user.refreshToken = refreshToken;
-        await user.save();
+        const { accessToken } = signToken(user.id, res);
         return res.json(SuccessResponse({ accessToken }));
     }
     catch (err) {
@@ -60,14 +57,48 @@ export const logout = async (req, res) => {
 };
 export const getUser = async (req, res) => {
     try {
-        console.log("wtf", req.user);
         if (!req.user) {
-            console.log("why");
             return res
                 .status(StatusCodes.NotFound)
                 .json(ErrorResponse("User not found"));
         }
         return res.status(StatusCodes.Success).json(SuccessResponse(req.user));
+    }
+    catch (err) {
+        return res.status(400).json(ErrorResponse(err));
+    }
+};
+export const getUserHistory = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res
+                .status(StatusCodes.NotFound)
+                .json(ErrorResponse("User not found"));
+        }
+        const history = await Transaction.find({ userId: req.user.id });
+        if (history.length === 0 && process.env.NODE_ENV === "development") {
+            return res.status(StatusCodes.Success).json(SuccessResponse([
+                {
+                    id: 1,
+                    type: "Deposit",
+                    method: "Bitcoin",
+                    amount: 1000,
+                    status: "Success",
+                    data: new Date(),
+                    narration: "Deposit for new business",
+                },
+                {
+                    id: 2,
+                    type: "Withdrawal",
+                    method: "Etc",
+                    amount: 1000,
+                    status: "Success",
+                    data: new Date(),
+                    narration: "Withdrawal for new business",
+                },
+            ]));
+        }
+        return res.status(StatusCodes.Success).json(SuccessResponse(history));
     }
     catch (err) {
         return res.status(400).json(ErrorResponse(err));

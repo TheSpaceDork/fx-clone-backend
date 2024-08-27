@@ -21,10 +21,7 @@ export const signup = async (req: Request, res: Response) => {
     const newUser = new User({ ...body });
 
     await newUser.save();
-    const { refreshToken, accessToken } = signToken(newUser.id, res);
-
-    newUser.refreshToken = refreshToken;
-    await newUser.save();
+    const { accessToken } = signToken(newUser.id, res);
     return res.json(SuccessResponse({ accessToken }));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
@@ -38,20 +35,14 @@ export const login = async (req: Request, res: Response) => {
       "password"
     );
     if (!user) {
-      return res
-        .status(400)
-        .json(ErrorResponse("User not found or not verified"));
+      return res.status(400).json(ErrorResponse("User not found"));
     }
 
     const correctPassword = await comparePassword(body.password, user.password);
     if (!correctPassword) {
       return res.status(400).json(ErrorResponse("Wrong credentials"));
     }
-
-    const { refreshToken, accessToken } = signToken(user.id, res);
-
-    user.refreshToken = refreshToken;
-    await user.save();
+    const { accessToken } = signToken(user.id, res);
     return res.json(SuccessResponse({ accessToken }));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
@@ -95,6 +86,30 @@ export const getUserHistory = async (req: Request, res: Response) => {
         .json(ErrorResponse("User not found"));
     }
     const history = await Transaction.find({ userId: req.user.id });
+    if (history.length === 0 && process.env.NODE_ENV === "development") {
+      return res.status(StatusCodes.Success).json(
+        SuccessResponse([
+          {
+            id: 1,
+            type: "Deposit",
+            method: "Bitcoin",
+            amount: 1000,
+            status: "Success",
+            data: new Date(),
+            narration: "Deposit for new business",
+          },
+          {
+            id: 2,
+            type: "Withdrawal",
+            method: "Etc",
+            amount: 1000,
+            status: "Success",
+            data: new Date(),
+            narration: "Withdrawal for new business",
+          },
+        ])
+      );
+    }
     return res.status(StatusCodes.Success).json(SuccessResponse(history));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));

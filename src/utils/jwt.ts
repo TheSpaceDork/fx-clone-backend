@@ -62,9 +62,9 @@ export const getUserFromToken = async (
 ) => {
   try {
     const token: string | undefined = req.headers.authorization?.split(" ")[1];
-    console.log(token);
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
+
       if (decoded && (decoded as { id: any })?.id) {
         req.user = await User.findById((decoded as { id: any }).id);
       }
@@ -72,6 +72,7 @@ export const getUserFromToken = async (
     }
     return next();
   } catch (err) {
+    console.log(err);
     return next();
   }
 };

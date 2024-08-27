@@ -17,10 +17,7 @@ const userSchema = new Schema({
         trim: true,
         required: true,
     },
-    country: {
-        type: String,
-        trim: true,
-    },
+    country: {},
     socialAccounts: {},
     password: {
         type: String,
@@ -35,9 +32,63 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    balance: {
+    totalBalance: {
         type: Number,
         default: 0,
+    },
+    activeDeposit: {
+        type: Number,
+        default: 0,
+    },
+    earnings: {
+        type: Number,
+        default: 0,
+    },
+    totalDeposit: {
+        type: Number,
+        default: 0,
+    },
+    totalWithdrawal: {
+        type: Number,
+        default: 0,
+    },
+    lastDeposit: {
+        type: Number,
+        default: 0,
+    },
+    lastWithdrawal: {
+        type: Number,
+        default: 0,
+    },
+    pendingWithdrawal: {
+        type: Number,
+        default: 0,
+    },
+    address: {
+        type: String,
+        default: "",
+    },
+    age: {
+        type: Number,
+    },
+    city: {
+        type: String,
+    },
+    contact: {},
+    dob: {
+        type: Date,
+        default: new Date(1990),
+    },
+    gender: {
+        type: String,
+    },
+    maritalStatus: {
+        type: String,
+        default: "single",
+    },
+    zipCode: {
+        type: String,
+        default: "22202",
     },
 }, { timestamps: true });
 userSchema.post("save", function (error, doc, next) {

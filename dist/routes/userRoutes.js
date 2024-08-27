@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, signup, logout, getUser, deleteUser, verifyUser, } from "../controllers/userController.js";
+import { login, signup, logout, getUser, deleteUser, verifyUser, getUserHistory, } from "../controllers/userController.js";
 // import { verifyToken } from "../utils/jwt.js";
 /**
  * @swagger
@@ -121,86 +121,11 @@ import { login, signup, logout, getUser, deleteUser, verifyUser, } from "../cont
  
  */
 const userRouter = Router();
-/**
- * @swagger
- *
- * /signup:
- *   post:
- *     produces:
- *       - application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *
- *     parameters:
- *       - name: username
- *         in: body
- *         required: true
- *         type: string
- *       - name: password
- *         in: body
- *         required: true
- *         type: string
- *       - name: fullName
- *         in: body
- *         required: true
- *         type: string
- *       - name: country
- *         in: body
- *         required: true
- *         type: string
- */
 userRouter.post("/signup", signup);
-/**
- * @swagger
- *
- * /login:
- *   post:
- *     produces:
- *       - object:
- *           schema:
- *             properties:
- *               - name: accessToken
- *                 type: string
- *
- *     parameters:
- *       - name: username
- *         in: requestBody
- *         required: true
- *         type: string
- *       - name: password
- *         in: requestBody
- *         required: true
- *         type: string
- *       - name: fullName
- *         in: requestBody
- *         required: true
- *         type: string
- *       - name: country
- *         in: requestBody
- *         required: true
- *         type: string
- */
 userRouter.post("/login", login);
-/**
- * @openapi
- * /verify:
- *   get:
- *     description: Welcome to swagger-jsdoc!
- *     responses:
- *       200:
- *         description: Returns a mysterious string.
- */
 userRouter.post("/verify", verifyUser);
-/**
- * @openapi
- * /:
- *   get:
- *     description: Welcome to swagger-jsdoc!
- *     responses:
- *       200:
- *         description: Returns a mysterious string.
- */
 userRouter.get("/", getUser);
+userRouter.get("/history", getUserHistory);
 userRouter.get("/logout", logout);
 // userRouter.use(verifyToken);
 // userRouter.get("/history/:timeFrame?", getUserHistory);

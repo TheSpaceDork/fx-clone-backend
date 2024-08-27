@@ -1,7 +1,5 @@
 import express from "express";
 import cors from "cors";
-// import path from "path";
-// import { fileURLToPath } from "url";
 import cookies from "cookie-parser";
 import userRouter from "./routes/userRoutes.js";
 import { getUserFromToken } from "./utils/jwt.js";
@@ -10,6 +8,7 @@ import transactionRoute from "./routes/transactionRoutes.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
+import NowPaymentsApi from "@nowpaymentsio/nowpayments-api-js";
 const options = {
     definition: {
         openapi: "3.0.0",
@@ -66,11 +65,13 @@ app.use("/transaction", transactionRoute);
 app.all("*", (req, res, next) => {
     return res.json("You've reached the backend");
 });
-import NowPaymentsApi from "@nowpaymentsio/nowpayments-api-js";
-const api = new NowPaymentsApi({ apiKey: "SG6ESJM-DKJM4GJ-PX3M2BE-GY6PS1M" }); // your api key
-async function logCurrencies() {
-    const a = await api.getCurrencies();
-    // console.log(a);
-}
-logCurrencies();
+export const paymentApi = new NowPaymentsApi({
+    apiKey: process.env.NP_API_KEY,
+}); // your api key
+// async function logCurrencies() {
+//   const a = await api.getCurrencies();
+//   // console.log(a);
+// }
+// logCurrencies();
+console.log("testing");
 export default app;
