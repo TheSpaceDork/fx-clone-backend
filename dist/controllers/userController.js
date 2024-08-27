@@ -122,7 +122,6 @@ export const verifyUser = async (req, res) => {
         }
         const user = await User.findByIdAndUpdate(req.user.id, { ...req.body, verified: true }, { returnDocument: "after" });
         if (user) {
-            console.log(user);
             const { id, password, ...others } = user.toJSON();
             return res
                 .status(StatusCodes.Success)

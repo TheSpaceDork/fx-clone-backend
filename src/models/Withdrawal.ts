@@ -5,13 +5,14 @@ const WithdrawalSchema = new Schema({
     type: String,
     required: true,
   },
-  method: {
+  currency: {
     type: String,
     required: true,
   },
   status: {
     type: String,
     required: true,
+    default: "pending",
   },
   narration: {
     type: String,

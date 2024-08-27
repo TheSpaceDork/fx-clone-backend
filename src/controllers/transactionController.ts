@@ -2,13 +2,7 @@ import { Request, Response } from "express";
 import { paymentApi } from "../app.js";
 import Transaction from "../models/transaction.js";
 import { ErrorResponse, SuccessResponse } from "../utils/response.js";
-import axios from "axios";
-const paymentRootApi = axios.create({
-  baseURL: "https://api.nowpayments.io/v1/",
-  timeout: 10000,
-  headers: { "x-api-key": paymentApi.apiKey },
-  validateStatus: () => true,
-});
+
 export const createPayment = async (req: Request, res: Response) => {
   try {
     const body = req.body;
@@ -59,29 +53,9 @@ export const createWithdrawRequest = async (req: Request, res: Response) => {
           ErrorResponse("Payout address required, please complete your profile")
         );
     }
-    const payment = await paymentRootApi.post("/payout", {
-      withdrawals: [
-        {
-          address: req.user.address,
-          amount: body.amount,
-          currency: body.currency,
-        },
-      ],
-      ipn_callback_url:
-        "https://fx-xoxa.onrender.com/transaction/payout-webhook",
-    });
-
-    // const payment = await paymentApi.createPayment({
-    //   pay_currency: "ngn",
-    //   price_currency: body.method,
-    //   price_amount: body.amount,
-    //   order_id: transaction.id,
-    //   ipn_callback_url: "https://fx-xoxa.onrender.com/transaction/webhook",
-    // });
-    console.log(payment.data);
     await transaction.save();
 
-    return res.json(SuccessResponse(payment.data));
+    return res.json(SuccessResponse(transaction));
   } catch (err) {
     console.log({ err });
     return err;

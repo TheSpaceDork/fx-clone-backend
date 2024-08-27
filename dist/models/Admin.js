@@ -16,22 +16,8 @@ const adminSchema = new Schema({
         select: false,
         required: true,
     },
-    account: {
-        type: String,
-        select: false,
-    },
-    refreshToken: {
-        type: String,
-    },
-    otp: {
-        type: Number,
-    },
-    percentage: {
-        type: Number,
-    },
 }, {
     timestamps: true,
-    toJSON: { virtuals: true },
 });
 const Admin = model("Admin", adminSchema);
 export default Admin;

@@ -1,4 +1,4 @@
-import User, { IUser } from "../models/User.js";
+import User from "../models/User.js";
 import { Request, Response } from "express";
 import {
   ErrorResponse,
@@ -7,7 +7,6 @@ import {
 } from "../utils/response.js";
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { signToken } from "../utils/jwt.js";
-import { Document, Types } from "mongoose";
 import Transaction from "../models/transaction.js";
 
 export const signup = async (req: Request, res: Response) => {
@@ -137,7 +136,6 @@ export const verifyUser = async (req: Request, res: Response) => {
       { returnDocument: "after" }
     );
     if (user) {
-      console.log(user);
       const { id, password, ...others } = user.toJSON();
       return res
         .status(StatusCodes.Success)

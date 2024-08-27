@@ -6,8 +6,6 @@ export interface IAdmin {
   phone: string;
   type?: "sub";
   password: string;
-  refreshToken: string;
-  otp: number;
   account?: string;
   percentage: number;
 }
@@ -30,23 +28,9 @@ const adminSchema = new Schema<IAdmin>(
       select: false,
       required: true,
     },
-    account: {
-      type: String,
-      select: false,
-    },
-    refreshToken: {
-      type: String,
-    },
-    otp: {
-      type: Number,
-    },
-    percentage: {
-      type: Number,
-    },
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
   }
 );
 

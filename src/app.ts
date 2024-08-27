@@ -9,6 +9,7 @@ import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
 import NowPaymentsApi from "@nowpaymentsio/nowpayments-api-js";
+import { GetCurrenciesReturn } from "@nowpaymentsio/nowpayments-api-js/src/actions/get-currencies/index.js";
 
 const options = {
   definition: {
@@ -82,8 +83,13 @@ export const paymentApi = new NowPaymentsApi({
   apiKey: process.env.NP_API_KEY!,
 }); // your api key
 async function logCurrencies() {
-  const a = await paymentApi.getCurrencies();
-  console.log(a);
+  const a = (await paymentApi.getCurrencies()) as GetCurrenciesReturn;
+  console.log(
+    a.currencies!.includes("ltc"),
+    a.currencies!.includes("btc"),
+    a.currencies!.includes("eth"),
+    a.currencies!.find((c) => c.includes("usdt"))
+  );
 }
-logCurrencies();
+// logCurrencies();
 export default app;

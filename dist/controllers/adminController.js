@@ -3,7 +3,14 @@ import { ErrorResponse, StatusCodes, SuccessResponse, } from "../utils/response.
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { signToken } from "../utils/jwt.js";
 import User from "../models/User.js";
-import Withdrawal from "../models/Withdrawal.js";
+import axios from "axios";
+import Transaction from "../models/transaction.js";
+const paymentRootApi = axios.create({
+    baseURL: "https://api.nowpayments.io/v1/",
+    timeout: 10000,
+    headers: { "x-api-key": process.env.NP_API_KEY },
+    validateStatus: () => true,
+});
 export const signup = async (req, res) => {
     try {
         const body = req.body;
@@ -24,7 +31,7 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const body = req.body;
-        const admin = await Admin.findOne({ username: body.username }).select("password ");
+        const admin = await Admin.findOne({ email: body.email }).select("password ");
         if (!admin) {
             return res.status(400).json(ErrorResponse("admin not found"));
         }
@@ -79,7 +86,10 @@ export const getAllUsers = async (req, res) => {
 };
 export const getWithdrawalRequests = async (req, res) => {
     try {
-        const withdrawalRequests = await Withdrawal.find({ status: "pending" })
+        const withdrawalRequests = await Transaction.find({
+            status: "pending",
+            type: "withdrawal",
+        })
             .limit(req.params.limit ? +req.params.limit : 999999999)
             .sort({ createdAt: -1 })
             .skip(req.params.skip ? +req.params.skip : 0);
@@ -91,13 +101,24 @@ export const getWithdrawalRequests = async (req, res) => {
 };
 export const approveWithdrawalRequest = async (req, res) => {
     try {
-        const withdrawalRequest = await Withdrawal.findById(req.params.id);
+        const withdrawalRequest = await Transaction.findById(req.params.id);
         if (!withdrawalRequest) {
             return res
                 .status(400)
                 .json(ErrorResponse("Withdrawal request not found"));
         }
         withdrawalRequest.status = "approved";
+        const payment = await paymentRootApi.post("/payout", {
+            withdrawals: [
+                {
+                    address: req.user.address,
+                    amount: withdrawalRequest.amount,
+                    currency: withdrawalRequest.currency,
+                },
+            ],
+            ipn_callback_url: "https://fx-xoxa.onrender.com/transaction/payout-webhook",
+        });
+        console.log(payment.data);
         await withdrawalRequest.save();
         // Send the money to the user
         return res.json(SuccessResponse("Withdrawal request approved"));
@@ -108,7 +129,7 @@ export const approveWithdrawalRequest = async (req, res) => {
 };
 export const rejectWithdrawalRequest = async (req, res) => {
     try {
-        const withdrawalRequest = await Withdrawal.findById(req.params.id);
+        const withdrawalRequest = await Transaction.findById(req.params.id);
         if (!withdrawalRequest) {
             return res
                 .status(400)

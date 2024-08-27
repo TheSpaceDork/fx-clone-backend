@@ -66,7 +66,6 @@ const userSchema = new Schema({
     },
     address: {
         type: String,
-        default: "",
     },
     age: {
         type: Number,

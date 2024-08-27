@@ -4,7 +4,7 @@ const TransactionSchema = new Schema({
         type: String,
         required: true,
     },
-    method: {
+    currency: {
         type: String,
         required: true,
     },

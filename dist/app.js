@@ -68,10 +68,9 @@ app.all("*", (req, res, next) => {
 export const paymentApi = new NowPaymentsApi({
     apiKey: process.env.NP_API_KEY,
 }); // your api key
-// async function logCurrencies() {
-//   const a = await api.getCurrencies();
-//   // console.log(a);
-// }
+async function logCurrencies() {
+    const a = (await paymentApi.getCurrencies());
+    console.log(a.currencies.includes("ltc"), a.currencies.includes("btc"), a.currencies.includes("eth"), a.currencies.find((c) => c.includes("usdt")));
+}
 // logCurrencies();
-console.log("testing");
 export default app;
