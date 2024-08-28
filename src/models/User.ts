@@ -1,4 +1,4 @@
-import { Schema, Types, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 export interface IUser {
   id?: string;
@@ -97,12 +97,15 @@ const userSchema = new Schema<IUser>(
     },
     address: {
       type: String,
+      default: "",
     },
     age: {
       type: Number,
+      default: 0,
     },
     city: {
       type: String,
+      default: "",
     },
     contact: {},
     dob: {
@@ -111,19 +114,19 @@ const userSchema = new Schema<IUser>(
     },
     gender: {
       type: String,
+      default: "",
     },
     maritalStatus: {
       type: String,
-      default: "single",
+      default: "",
     },
     zipCode: {
       type: String,
-      default: "22202",
+      default: "",
     },
   },
   { timestamps: true }
 );
-
 userSchema.post("save", function (error: any, doc: any, next: any) {
   if (error.name === "MongoServerError" && error.code === 11000) {
     next(new Error("There was a duplicate key error"));

@@ -72,6 +72,34 @@ export const getUser = async (req: Request, res: Response) => {
         .status(StatusCodes.NotFound)
         .json(ErrorResponse("User not found"));
     }
+    const TransactionDocs = await Transaction.find({
+      userId: req.user.id,
+    });
+
+    const totalDeposit = TransactionDocs.reduce(
+      (prev, curr) => {
+        if (curr.type === "deposit") {
+          return prev + curr.amount;
+        }
+        return prev;
+      },
+      TransactionDocs[0].type === "deposit" ? TransactionDocs[0].amount : 0
+    );
+    const totalWithdrawal = TransactionDocs.reduce(
+      (prev, curr) => {
+        if (curr.type === "withdrawal") {
+          return prev + curr.amount;
+        }
+        return prev;
+      },
+      TransactionDocs[0].type === "withdrawal" ? TransactionDocs[0].amount : 0
+    );
+
+    req.user.totalDeposit = totalDeposit;
+    req.user.totalWithdrawal = totalWithdrawal;
+    req.user.totalBalance = totalDeposit - totalWithdrawal;
+    await req.user.save();
+
     return res.status(StatusCodes.Success).json(SuccessResponse(req.user));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
@@ -94,6 +122,7 @@ export const getUserHistory = async (req: Request, res: Response) => {
             method: "Bitcoin",
             amount: 1000,
             status: "Success",
+            dummy: true,
             data: new Date(),
             narration: "Deposit for new business",
           },
@@ -103,6 +132,7 @@ export const getUserHistory = async (req: Request, res: Response) => {
             method: "Etc",
             amount: 1000,
             status: "Success",
+            dummy: true,
             data: new Date(),
             narration: "Withdrawal for new business",
           },
