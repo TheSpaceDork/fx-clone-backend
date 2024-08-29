@@ -13,6 +13,7 @@ import {
   getDepositRequests,
   rejectDepositRequest,
 } from "../controllers/adminController.js";
+import { verifyToken } from "../utils/jwt.js";
 // import { verifyToken } from "../utils/jwt.js";
 
 const adminRouter = Router();
@@ -86,6 +87,7 @@ adminRouter.get("/logout", logout);
  *         description: Internal server error
  *
  */
+adminRouter.use(verifyToken);
 adminRouter.get("/user", getAllUsers);
 /**
  * @swagger
@@ -181,5 +183,5 @@ adminRouter.post("/deposit/reject/:id", rejectDepositRequest);
 
 // adminRouter.use(verifyToken);
 // adminRouter.get("/history/:timeFrame?", getadminHistory);
-adminRouter.delete("/:id", deleteAdmin);
+// adminRouter.delete("/:id", deleteAdmin);
 export default adminRouter;

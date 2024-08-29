@@ -8,6 +8,7 @@ import {
   verifyUser,
   getUserHistory,
 } from "../controllers/userController.js";
+import { verifyToken } from "../utils/jwt.js";
 // import { verifyToken } from "../utils/jwt.js";
 
 /**
@@ -194,6 +195,7 @@ userRouter.post("/login", login);
  *       500:
  *         description: Internal server error
  */
+userRouter.use(verifyToken);
 userRouter.post("/verify", verifyUser);
 /**
  * @swagger
@@ -229,9 +231,9 @@ userRouter.get("/", getUser);
  *         description: Internal server error
  */
 userRouter.get("/history", getUserHistory);
-userRouter.get("/logout", logout);
+// userRouter.get("/logout", logout);
 
 // userRouter.use(verifyToken);
 // userRouter.get("/history/:timeFrame?", getUserHistory);
-userRouter.delete("/:id", deleteUser);
+// userRouter.delete("/:id", deleteUser);
 export default userRouter;

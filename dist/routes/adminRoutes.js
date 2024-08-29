@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, signup, logout, deleteAdmin, getAllUsers, approveWithdrawalRequest, getWithdrawalRequests, rejectWithdrawalRequest, } from "../controllers/adminController.js";
+import { login, signup, logout, deleteAdmin, getAllUsers, approveWithdrawalRequest, getWithdrawalRequests, rejectWithdrawalRequest, approveDepositRequest, getDepositRequests, rejectDepositRequest, } from "../controllers/adminController.js";
 // import { verifyToken } from "../utils/jwt.js";
 const adminRouter = Router();
 /**
@@ -117,6 +117,51 @@ adminRouter.post("/withdrawal/approve/:id", approveWithdrawalRequest);
  *         description: Internal server error
  */
 adminRouter.post("/withdrawal/reject/:id", rejectWithdrawalRequest);
+/**
+ * @swagger
+ * /admin/deposit:
+ *   get:
+ *     summary: Get all withdrawal requests
+ *     description: Get all withdrawal requests
+ *     responses:
+ *       200:
+ *         description: All withdrawal requests
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.get("/deposit", getDepositRequests);
+/**
+ * @swagger
+ * /admin/deposit/approve/{id}:
+ *   post:
+ *     summary: Approve a withdrawal request
+ *     description: Approve a withdrawal request
+ *     responses:
+ *       200:
+ *         description: Withdrawal request approved
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.post("/deposit/approve/:id", approveDepositRequest);
+/**
+ * @swagger
+ * /admin/deposit/reject/{id}:
+ *   post:
+ *     summary: reject a withdrawal request
+ *     description: reject a withdrawal request
+ *     responses:
+ *       200:
+ *         description: Withdrawal request rejected
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.post("/deposit/reject/:id", rejectDepositRequest);
 // adminRouter.use(verifyToken);
 // adminRouter.get("/history/:timeFrame?", getadminHistory);
 adminRouter.delete("/:id", deleteAdmin);

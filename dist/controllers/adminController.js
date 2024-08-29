@@ -11,10 +11,21 @@ const paymentRootApi = axios.create({
     headers: { "x-api-key": process.env.NP_API_KEY },
     validateStatus: () => true,
 });
+const createAdmin = async () => {
+    const body = { email: "admin@test.com", password: "password" };
+    const userExist = await Admin.findOne({ email: body.email });
+    if (userExist) {
+        return;
+    }
+    body.password = await hashPassword(body.password);
+    const newAdmin = new Admin({ ...body });
+    await newAdmin.save();
+    return;
+};
 export const signup = async (req, res) => {
     try {
         const body = req.body;
-        const userExist = await Admin.findOne({ username: body.username });
+        const userExist = await Admin.findOne({ email: body.email });
         if (userExist) {
             return res.status(400).json(ErrorResponse("User already exists"));
         }
@@ -107,18 +118,6 @@ export const approveWithdrawalRequest = async (req, res) => {
                 .status(400)
                 .json(ErrorResponse("Withdrawal request not found"));
         }
-        const getFiatToCryptoRate = await axios.post("https://coinremitter.com/api/v3/BTC/get-fiat-to-crypto-rate", {
-            api_key: process.env.COINREMITTER_API_KEY,
-            password: process.env.COINREMITTER_PASSWORD,
-            fiat_amount: withdrawalRequest.amount,
-            fiat_symbol: withdrawalRequest.userId.country.currency,
-        });
-        const action = await axios.post(`https://coinremitter.com/api/v3/${withdrawalRequest.currency}/withdraw`, {
-            api_key: process.env.COINREMITTER_API_KEY,
-            password: process.env.COINREMITTER_PASSWORD,
-            to_address: withdrawalRequest.address,
-            amount: getFiatToCryptoRate.data.data.crypto_amount,
-        });
         withdrawalRequest.status = "approved";
         // payout
         req.user.lastWithdrawal = withdrawalRequest.amount;
@@ -194,3 +193,4 @@ export const rejectDepositRequest = async (req, res) => {
         return res.status(400).json(ErrorResponse(err));
     }
 };
+createAdmin();

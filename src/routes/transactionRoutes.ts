@@ -4,6 +4,7 @@ import {
   paymentStatusWebHook,
   payoutStatusWebHook,
 } from "../controllers/transactionController.js";
+import { verifyToken } from "../utils/jwt.js";
 // import {
 //   getBankCode,
 //   confirmAccount,
@@ -13,6 +14,7 @@ const transactionRoute = Router();
 
 transactionRoute.post("/webhook", paymentStatusWebHook);
 transactionRoute.post("/payout-webhook", payoutStatusWebHook);
+transactionRoute.use(verifyToken);
 /**
  * @swagger
  * /transaction/create:
