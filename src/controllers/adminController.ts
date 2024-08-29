@@ -135,24 +135,7 @@ export const approveWithdrawalRequest = async (req: Request, res: Response) => {
         .status(400)
         .json(ErrorResponse("Withdrawal request not found"));
     }
-    const getFiatToCryptoRate = await axios.post(
-      "https://coinremitter.com/api/v3/BTC/get-fiat-to-crypto-rate",
-      {
-        api_key: process.env.COINREMITTER_API_KEY,
-        password: process.env.COINREMITTER_PASSWORD,
-        fiat_amount: withdrawalRequest.amount,
-        fiat_symbol: (withdrawalRequest.userId as any).country.currency,
-      }
-    );
-    const action = await axios.post(
-      `https://coinremitter.com/api/v3/${withdrawalRequest.currency}/withdraw`,
-      {
-        api_key: process.env.COINREMITTER_API_KEY,
-        password: process.env.COINREMITTER_PASSWORD,
-        to_address: withdrawalRequest.address,
-        amount: getFiatToCryptoRate.data.data.crypto_amount,
-      }
-    );
+    
 
     withdrawalRequest.status = "approved";
     // payout
