@@ -26,7 +26,7 @@ const createAdmin = async () => {
    body.password = await hashPassword(body.password);
     const newAdmin = new Admin({ ...body });
     await newAdmin.save();
- return:
+ return;
 
 }
 
