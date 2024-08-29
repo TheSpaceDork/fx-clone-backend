@@ -20,13 +20,14 @@ export interface IUser {
   lastDeposit: number;
   gender: string;
   dob: Date;
-  age: number;
+  age: string;
   maritalStatus: string;
   contact: number;
   city: string;
   zipCode: string;
   address: string;
   currency: string;
+  [key: string]: any;
 }
 
 const userSchema = new Schema<IUser>(
@@ -100,8 +101,8 @@ const userSchema = new Schema<IUser>(
       default: "",
     },
     age: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: "",
     },
     city: {
       type: String,
@@ -116,7 +117,23 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: "",
     },
-    maritalStatus: {
+    facebook: {
+      type: String,
+      default: "",
+    },
+    twitter: {
+      type: String,
+      default: "",
+    },
+    instagram: {
+      type: String,
+      default: "",
+    },
+    whatsapp: {
+      type: String,
+      default: "",
+    },
+    marital: {
       type: String,
       default: "",
     },
@@ -124,6 +141,8 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: "",
     },
+    idFront: {},
+    idBack: {},
   },
   { timestamps: true }
 );

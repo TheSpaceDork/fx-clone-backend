@@ -66,12 +66,15 @@ const userSchema = new Schema({
     },
     address: {
         type: String,
+        default: "",
     },
     age: {
-        type: Number,
+        type: String,
+        default: "",
     },
     city: {
         type: String,
+        default: "",
     },
     contact: {},
     dob: {
@@ -80,15 +83,34 @@ const userSchema = new Schema({
     },
     gender: {
         type: String,
+        default: "",
     },
-    maritalStatus: {
+    facebook: {
         type: String,
-        default: "single",
+        default: "",
+    },
+    twitter: {
+        type: String,
+        default: "",
+    },
+    instagram: {
+        type: String,
+        default: "",
+    },
+    whatsapp: {
+        type: String,
+        default: "",
+    },
+    marital: {
+        type: String,
+        default: "",
     },
     zipCode: {
         type: String,
-        default: "22202",
+        default: "",
     },
+    idFront: {},
+    idBack: {},
 }, { timestamps: true });
 userSchema.post("save", function (error, doc, next) {
     if (error.name === "MongoServerError" && error.code === 11000) {

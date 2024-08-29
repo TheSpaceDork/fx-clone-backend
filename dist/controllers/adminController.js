@@ -101,25 +101,30 @@ export const getWithdrawalRequests = async (req, res) => {
 };
 export const approveWithdrawalRequest = async (req, res) => {
     try {
-        const withdrawalRequest = await Transaction.findById(req.params.id);
+        const withdrawalRequest = await Transaction.findById(req.params.id).populate("userId");
         if (!withdrawalRequest) {
             return res
                 .status(400)
                 .json(ErrorResponse("Withdrawal request not found"));
         }
-        withdrawalRequest.status = "approved";
-        const payment = await paymentRootApi.post("/payout", {
-            withdrawals: [
-                {
-                    address: req.user.address,
-                    amount: withdrawalRequest.amount,
-                    currency: withdrawalRequest.currency,
-                },
-            ],
-            ipn_callback_url: "https://fx-xoxa.onrender.com/transaction/payout-webhook",
+        const getFiatToCryptoRate = await axios.post("https://coinremitter.com/api/v3/BTC/get-fiat-to-crypto-rate", {
+            api_key: process.env.COINREMITTER_API_KEY,
+            password: process.env.COINREMITTER_PASSWORD,
+            fiat_amount: withdrawalRequest.amount,
+            fiat_symbol: withdrawalRequest.userId.country.currency,
         });
-        console.log(payment.data);
+        const action = await axios.post(`https://coinremitter.com/api/v3/${withdrawalRequest.currency}/withdraw`, {
+            api_key: process.env.COINREMITTER_API_KEY,
+            password: process.env.COINREMITTER_PASSWORD,
+            to_address: withdrawalRequest.address,
+            amount: getFiatToCryptoRate.data.data.crypto_amount,
+        });
+        withdrawalRequest.status = "approved";
+        // payout
+        req.user.lastWithdrawal = withdrawalRequest.amount;
+        req.user.pendingWithdrawal = 0;
         await withdrawalRequest.save();
+        await req.user.save();
         // Send the money to the user
         return res.json(SuccessResponse("Withdrawal request approved"));
     }
@@ -138,6 +143,52 @@ export const rejectWithdrawalRequest = async (req, res) => {
         withdrawalRequest.status = "rejected";
         await withdrawalRequest.save();
         return res.json(SuccessResponse("Withdrawal request rejected"));
+    }
+    catch (err) {
+        return res.status(400).json(ErrorResponse(err));
+    }
+};
+export const getDepositRequests = async (req, res) => {
+    try {
+        const depositRequests = await Transaction.find({
+            status: "pending",
+            type: "deposit",
+        })
+            .limit(req.params.limit ? +req.params.limit : 999999999)
+            .sort({ createdAt: -1 })
+            .skip(req.params.skip ? +req.params.skip : 0);
+        return res.json(SuccessResponse(depositRequests));
+    }
+    catch (err) {
+        return res.status(400).json(ErrorResponse(err));
+    }
+};
+export const approveDepositRequest = async (req, res) => {
+    try {
+        const depositRequest = await Transaction.findById(req.params.id);
+        if (!depositRequest) {
+            return res.status(400).json(ErrorResponse("deposit request not found"));
+        }
+        depositRequest.status = "approved";
+        // Send the money to the user
+        req.user.lastDeposit = depositRequest.amount;
+        req.user.activeDeposit = 0;
+        await depositRequest.save();
+        return res.json(SuccessResponse("deposit request approved"));
+    }
+    catch (err) {
+        return res.status(400).json(ErrorResponse(err));
+    }
+};
+export const rejectDepositRequest = async (req, res) => {
+    try {
+        const depositRequest = await Transaction.findById(req.params.id);
+        if (!depositRequest) {
+            return res.status(400).json(ErrorResponse("deposit request not found"));
+        }
+        depositRequest.status = "rejected";
+        await depositRequest.save();
+        return res.json(SuccessResponse("deposit request rejected"));
     }
     catch (err) {
         return res.status(400).json(ErrorResponse(err));

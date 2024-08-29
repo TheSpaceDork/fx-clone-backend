@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { paymentApi } from "../app.js";
+
 import Transaction from "../models/transaction.js";
 import { ErrorResponse, SuccessResponse } from "../utils/response.js";
+import Address from "../models/Address.js";
 
 export const createPayment = async (req: Request, res: Response) => {
   try {
@@ -15,27 +16,28 @@ export const createPayment = async (req: Request, res: Response) => {
       narration: body.narration,
       currency: body.currency,
       address: req.user!.address,
+      ...body,
     });
 
-    const payment = await paymentApi.createPayment({
-      pay_currency: "ngn",
-      price_currency: body.currency,
-      price_amount: body.amount,
-      order_id: transaction.id,
-      ipn_callback_url: "https://fx-xoxa.onrender.com/transaction/webhook",
-    });
-    console.log(payment);
     await transaction.save();
     req.user!.activeDeposit = transaction.amount;
     await req.user!.save();
 
-    return res.json(SuccessResponse(payment));
+    return res.json(SuccessResponse(transaction));
   } catch (err) {
     console.log({ err });
     return res.status(400).json(ErrorResponse(err));
   }
 };
 
+export const getAddress = async (req: Request, res: Response) => {
+  try {
+    const address = await Address.findOne({ code: req.params.code });
+    return res.json(SuccessResponse(address));
+  } catch (err) {
+    return res.status(400).json(ErrorResponse(err));
+  }
+};
 export const createWithdrawRequest = async (req: Request, res: Response) => {
   try {
     const body = req.body;
@@ -172,12 +174,12 @@ export const payoutStatusWebHook = async (req: Request, res: Response) => {
     console.log({ err });
   }
 };
-export const getListOfPayment = async () => {
-  try {
-    const listOfPayment = await paymentApi.getListPayments({ limit: 1000 });
-    return listOfPayment;
-  } catch (err) {
-    console.log({ err });
-    return err;
-  }
-};
+// export const getListOfPayment = async () => {
+//   try {
+//     const listOfPayment = await paymentApi.getListPayments({ limit: 1000 });
+//     return listOfPayment;
+//   } catch (err) {
+//     console.log({ err });
+//     return err;
+//   }
+// };

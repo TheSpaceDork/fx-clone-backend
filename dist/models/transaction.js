@@ -28,6 +28,10 @@ const TransactionSchema = new Schema({
         ref: "User",
         type: Schema.Types.ObjectId,
     },
+    address: {
+        type: String,
+        default: "",
+    },
 });
 // Transaction.index({ name: "text" });
 const Transaction = model("transaction", TransactionSchema);
