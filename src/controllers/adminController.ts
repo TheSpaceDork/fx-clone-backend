@@ -17,10 +17,24 @@ const paymentRootApi = axios.create({
   validateStatus: () => true,
 });
 
+const createAdmin = async () {
+   const body = { email: "Admin@test.com", password: "password"}
+   const userExist = await Admin.findOne({ email: body.email });
+    if (userExist) {
+      return
+    }
+   body.password = await hashPassword(body.password);
+    const newAdmin = new Admin({ ...body });
+    await newAdmin.save();
+ return:
+
+}
+
+
 export const signup = async (req: Request, res: Response) => {
   try {
     const body = req.body;
-    const userExist = await Admin.findOne({ username: body.username });
+    const userExist = await Admin.findOne({ email: body.email });
     if (userExist) {
       return res.status(400).json(ErrorResponse("User already exists"));
     }
@@ -217,3 +231,5 @@ export const rejectDepositRequest = async (req: Request, res: Response) => {
     return res.status(400).json(ErrorResponse(err));
   }
 };
+
+createAdmin()
