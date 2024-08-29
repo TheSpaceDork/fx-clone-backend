@@ -18,7 +18,7 @@ const paymentRootApi = axios.create({
 });
 
 const createAdmin = async () => {
-   const body = { email: "Admin@test.com", password: "password"}
+   const body = { email: "admin@test.com", password: "password"}
    const userExist = await Admin.findOne({ email: body.email });
     if (userExist) {
       return
