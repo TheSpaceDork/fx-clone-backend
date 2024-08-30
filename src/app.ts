@@ -10,6 +10,7 @@ import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
 import { GetCurrenciesReturn } from "@nowpaymentsio/nowpayments-api-js/src/actions/get-currencies/index.js";
 
+const origin = {origin: true}
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -33,7 +34,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(
-  cors()
+  cors(origin)
 );
 
 // body parser
@@ -48,7 +49,7 @@ app.use(cookies());
 // 3) ROUTES
 app.options(
   "*",
-  cors()
+  cors(origin)
 );
 app.use(getUserFromToken);
 app.use("/user", userRouter);
