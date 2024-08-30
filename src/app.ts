@@ -10,7 +10,19 @@ import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
 import { GetCurrenciesReturn } from "@nowpaymentsio/nowpayments-api-js/src/actions/get-currencies/index.js";
 
-const origin = {origin: true}
+const origin = {
+  origin: [
+    "localhost:3000",
+    "localhost:3001",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "https://foreign-exchange-nine.vercel.app/",
+    "http://foreign-exchange-nine.vercel.app/",
+    "foreign-exchange-nine.vercel.app/",
+  ],
+  credentials: true,
+};
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -33,9 +45,7 @@ const app = express();
 
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-app.use(
-  cors(origin)
-);
+app.use(cors(origin));
 
 // body parser
 app.use(
@@ -47,10 +57,7 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookies());
 
 // 3) ROUTES
-app.options(
-  "*",
-  cors(origin)
-);
+app.options("*", cors(origin));
 app.use(getUserFromToken);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
