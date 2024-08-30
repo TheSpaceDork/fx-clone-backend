@@ -8,7 +8,6 @@ import transactionRoute from "./routes/transactionRoutes.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
-import NowPaymentsApi from "@nowpaymentsio/nowpayments-api-js";
 const options = {
     definition: {
         openapi: "3.0.0",
@@ -65,12 +64,4 @@ app.use("/transaction", transactionRoute);
 app.all("*", (req, res, next) => {
     return res.json("You've reached the backend");
 });
-export const paymentApi = new NowPaymentsApi({
-    apiKey: process.env.NP_API_KEY,
-}); // your api key
-async function logCurrencies() {
-    const a = (await paymentApi.getCurrencies());
-    console.log(a.currencies.includes("ltc"), a.currencies.includes("btc"), a.currencies.includes("eth"), a.currencies.find((c) => c.includes("usdt")));
-}
-// logCurrencies();
 export default app;

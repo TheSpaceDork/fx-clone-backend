@@ -3,9 +3,31 @@ import { Request, Response } from "express";
 import Transaction from "../models/transaction.js";
 import { ErrorResponse, SuccessResponse } from "../utils/response.js";
 import Address from "../models/Address.js";
+import { v2 as cloudinary } from "cloudinary";
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+  secure: process.env.NODE_ENV === "production" ? true : false,
+});
 
 export const createPayment = async (req: Request, res: Response) => {
   try {
+    const options = {
+      use_filename: true,
+      unique_filename: false,
+      overwrite: true,
+      resource_type: "image" as const,
+    };
+    if (!req.file) {
+      return res.status(400).json(ErrorResponse("Proof of payment required"));
+    }
+
+    // Upload the image
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+    const result = await cloudinary.uploader.upload(dataURI, options);
+
     const body = req.body;
     const transaction = new Transaction({
       amount: body.amount,
@@ -16,6 +38,10 @@ export const createPayment = async (req: Request, res: Response) => {
       narration: body.narration,
       currency: body.currency,
       address: req.user!.address,
+      proof: result.url,
+      email: req.user!.email,
+      username: req.user!.username,
+
       ...body,
     });
 
@@ -74,7 +100,7 @@ export const createWithdrawRequest = async (req: Request, res: Response) => {
     req.user!.totalDeposit = totalDeposit;
     req.user!.totalWithdrawal = totalWithdrawal;
 
-    if (totalDeposit < body.amount) {
+    if (req.user!.totalBalance < body.amount) {
       return res
         .status(400)
         .json(ErrorResponse("Withdrawal amount is greater than your balance"));
@@ -89,6 +115,8 @@ export const createWithdrawRequest = async (req: Request, res: Response) => {
       narration: body.narration,
       currency: body.currency,
       address: req.user!.address,
+      email: req.user!.email,
+      username: req.user!.username,
     });
 
     await transaction.save();
@@ -101,18 +129,6 @@ export const createWithdrawRequest = async (req: Request, res: Response) => {
     return err;
   }
 };
-// export const getPaymentStatus = async () => {
-//   try {
-//     const paymentStatus = await paymentApi.getPaymentStatus({
-//       payment_id: "pay_2e7b4e4e-7b4e-4e2e-9b4e-2e4e7b4e2e4e",
-//     });
-//     console.log(paymentStatus);
-//     return paymentStatus;
-//   } catch (err) {
-//     console.log({ err });
-//     return err;
-//   }
-// };
 
 export const paymentStatusWebHook = async (req: Request, res: Response) => {
   try {
@@ -174,12 +190,3 @@ export const payoutStatusWebHook = async (req: Request, res: Response) => {
     console.log({ err });
   }
 };
-// export const getListOfPayment = async () => {
-//   try {
-//     const listOfPayment = await paymentApi.getListPayments({ limit: 1000 });
-//     return listOfPayment;
-//   } catch (err) {
-//     console.log({ err });
-//     return err;
-//   }
-// };

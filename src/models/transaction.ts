@@ -33,6 +33,14 @@ const TransactionSchema = new Schema({
     type: String,
     default: "",
   },
+  email: {
+    type: String,
+    default: "",
+  },
+  username: {
+    type: String,
+    default: "",
+  },
 });
 
 // Transaction.index({ name: "text" });

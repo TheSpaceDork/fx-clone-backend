@@ -228,6 +228,9 @@ export const removeFromBalance = async (req: Request, res: Response) => {
     const user = await User.findByIdAndUpdate(id);
     if (!user) return res.status(400).json(ErrorResponse("User not found"));
     user.totalBalance = user.totalBalance - req.body.amount;
+    if (user.totalBalance < 0) {
+      user.totalBalance = 0;
+    }
     await user.save();
     return res.json(SuccessResponse(user));
   } catch (error) {

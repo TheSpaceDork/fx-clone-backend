@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { createPayment, paymentStatusWebHook, payoutStatusWebHook, } from "../controllers/transactionController.js";
+import { createPayment, paymentStatusWebHook, payoutStatusWebHook, createWithdrawRequest, } from "../controllers/transactionController.js";
 import { verifyToken } from "../utils/jwt.js";
-// import {
-//   getBankCode,
-//   confirmAccount,
-// } from "../controllers/paymentController.js";
+import multer from "multer";
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 const transactionRoute = Router();
 transactionRoute.post("/webhook", paymentStatusWebHook);
 transactionRoute.post("/payout-webhook", payoutStatusWebHook);
@@ -36,7 +35,7 @@ transactionRoute.use(verifyToken);
  *       500:
  *         description: Internal server error
  */
-transactionRoute.post("/create", createPayment);
+transactionRoute.post("/create", upload.single("proof"), createPayment);
 /**
  * @swagger
  * /transaction/withdraw:
@@ -64,7 +63,7 @@ transactionRoute.post("/create", createPayment);
  *       500:
  *         description: Internal server error
  */
-transactionRoute.post("/withdraw", createPayment);
+transactionRoute.post("/withdraw", createWithdrawRequest);
 // transactionRoute.get("/:name?", gettransactionCode);
 export default transactionRoute;
 // //

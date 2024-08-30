@@ -34,34 +34,42 @@ const userSchema = new Schema({
     },
     totalBalance: {
         type: Number,
+        min: 0,
         default: 0,
     },
     activeDeposit: {
         type: Number,
+        min: 0,
         default: 0,
     },
     earnings: {
         type: Number,
+        min: 0,
         default: 0,
     },
     totalDeposit: {
         type: Number,
+        min: 0,
         default: 0,
     },
     totalWithdrawal: {
         type: Number,
+        min: 0,
         default: 0,
     },
     lastDeposit: {
         type: Number,
+        min: 0,
         default: 0,
     },
     lastWithdrawal: {
         type: Number,
+        min: 0,
         default: 0,
     },
     pendingWithdrawal: {
         type: Number,
+        min: 0,
         default: 0,
     },
     address: {
