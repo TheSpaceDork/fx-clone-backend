@@ -41,6 +41,10 @@ const TransactionSchema = new Schema({
     type: String,
     default: "",
   },
+proof: {
+    type: String,
+    default: "",
+  },
 });
 
 // Transaction.index({ name: "text" });
