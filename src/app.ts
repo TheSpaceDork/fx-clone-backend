@@ -34,16 +34,7 @@ app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(
   cors({
-    origin: [
-      "localhost:3000",
-      "localhost:3001",
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://localhost:3002",
-      "https://foreign-exchange-nine.vercel.app",
-      "http://foreign-exchange-nine.vercel.app",
-      "foreign-exchange-nine.vercel.app",
-    ],
+    origin: "*",
     credentials: true,
     // exposedHeaders: ["set-cookie"]
   })
@@ -62,16 +53,7 @@ app.use(cookies());
 app.options(
   "*",
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "localhost:3000",
-      "localhost:3001",
-      "http://localhost:3002",
-      "https://foreign-exchange-nine.vercel.app",
-      "http://foreign-exchange-nine.vercel.app",
-      "foreign-exchange-nine.vercel.app",
-    ],
+    origin: "*",
     credentials: true,
     // exposedHeaders: ["set-cookie"]
   })
