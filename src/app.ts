@@ -8,8 +8,6 @@ import transactionRoute from "./routes/transactionRoutes.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
-import { GetCurrenciesReturn } from "@nowpaymentsio/nowpayments-api-js/src/actions/get-currencies/index.js";
-
 const origin = {
   origin: [
     "localhost:3000",
@@ -17,9 +15,10 @@ const origin = {
     "http://localhost:3000",
     "http://localhost:3001",
     "http://localhost:3002",
-    "https://foreign-exchange-nine.vercel.app/",
-    "http://foreign-exchange-nine.vercel.app/",
-    "foreign-exchange-nine.vercel.app/",
+    "https://foreign-exchange-nine.vercel.app",
+    "http://foreign-exchange-nine.vercel.app",
+    "foreign-exchange-nine.vercel.app",
+    
   ],
   credentials: true,
 };
