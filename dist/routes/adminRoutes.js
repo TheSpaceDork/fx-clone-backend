@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { login, signup, logout, deleteAdmin, getAllUsers, approveWithdrawalRequest, getWithdrawalRequests, rejectWithdrawalRequest, approveDepositRequest, getDepositRequests, rejectDepositRequest, } from "../controllers/adminController.js";
+import { login, signup, logout, getAllUsers, approveWithdrawalRequest, getWithdrawalRequests, rejectWithdrawalRequest, approveDepositRequest, getDepositRequests, rejectDepositRequest, addToBalance, removeFromBalance, } from "../controllers/adminController.js";
+import { verifyToken } from "../utils/jwt.js";
 // import { verifyToken } from "../utils/jwt.js";
 const adminRouter = Router();
 /**
@@ -71,6 +72,7 @@ adminRouter.get("/logout", logout);
  *         description: Internal server error
  *
  */
+adminRouter.use(verifyToken);
 adminRouter.get("/user", getAllUsers);
 /**
  * @swagger
@@ -149,6 +151,54 @@ adminRouter.get("/deposit", getDepositRequests);
 adminRouter.post("/deposit/approve/:id", approveDepositRequest);
 /**
  * @swagger
+ * /admin/user/add/{id}:
+ *   post:
+ *     summary: add to user account balance
+ *     description: add to user account balance
+ *     requestBody:
+ *       required: true
+ *       content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              amount:
+ *                type: number
+ *     responses:
+ *       200:
+ *         description: balance updated
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.post("/user/add/:id", addToBalance);
+/**
+ * @swagger
+ * /admin/user/remove/{id}:
+ *   post:
+ *     summary: remove from user account balance
+ *     description: remove from user account balance
+ *     requestBody:
+ *       required: true
+ *       content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              amount:
+ *                type: number
+ *     responses:
+ *       200:
+ *         description: balance updated
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.post("/user/remove/:id", removeFromBalance);
+/**
+ * @swagger
  * /admin/deposit/reject/{id}:
  *   post:
  *     summary: reject a withdrawal request
@@ -164,5 +214,5 @@ adminRouter.post("/deposit/approve/:id", approveDepositRequest);
 adminRouter.post("/deposit/reject/:id", rejectDepositRequest);
 // adminRouter.use(verifyToken);
 // adminRouter.get("/history/:timeFrame?", getadminHistory);
-adminRouter.delete("/:id", deleteAdmin);
+// adminRouter.delete("/:id", deleteAdmin);
 export default adminRouter;

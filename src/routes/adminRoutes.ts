@@ -12,6 +12,8 @@ import {
   approveDepositRequest,
   getDepositRequests,
   rejectDepositRequest,
+  addToBalance,
+  removeFromBalance,
 } from "../controllers/adminController.js";
 import { verifyToken } from "../utils/jwt.js";
 // import { verifyToken } from "../utils/jwt.js";
@@ -165,6 +167,56 @@ adminRouter.get("/deposit", getDepositRequests);
  *         description: Internal server error
  */
 adminRouter.post("/deposit/approve/:id", approveDepositRequest);
+/**
+ * @swagger
+ * /admin/user/add/{id}:
+ *   post:
+ *     summary: add to user account balance
+ *     description: add to user account balance
+ *     requestBody:
+ *       required: true
+ *       content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              amount:
+ *                type: number
+ *     responses:
+ *       200:
+ *         description: balance updated
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+
+adminRouter.post("/user/add/:id", addToBalance);
+/**
+ * @swagger
+ * /admin/user/remove/{id}:
+ *   post:
+ *     summary: remove from user account balance
+ *     description: remove from user account balance
+ *     requestBody:
+ *       required: true
+ *       content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              amount:
+ *                type: number
+ *     responses:
+ *       200:
+ *         description: balance updated
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+
+adminRouter.post("/user/remove/:id", removeFromBalance);
 /**
  * @swagger
  * /admin/deposit/reject/{id}:

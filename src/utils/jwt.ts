@@ -68,7 +68,6 @@ export const getUserFromToken = async (
       if (decoded && (decoded as { id: any })?.id) {
         req.user = await User.findById((decoded as { id: any }).id);
       }
-      console.log(req.user, decoded);
     }
     return next();
   } catch (err) {

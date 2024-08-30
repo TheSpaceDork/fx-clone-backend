@@ -18,7 +18,7 @@ import { verifyToken } from "../utils/jwt.js";
  *    bearerAuth:
  *     type: http
  *     scheme: bearer
- *     bearerFormat: JWT
+ *     bearerFormat: bearer JWT
  *   schemas:
  *     User:
  *       type: object

@@ -17,20 +17,6 @@ const paymentRootApi = axios.create({
   validateStatus: () => true,
 });
 
-const createAdmin = async () => {
-   const body = { email: "admin@test.com", password: "password"}
-   const userExist = await Admin.findOne({ email: body.email });
-    if (userExist) {
-      return
-    }
-   body.password = await hashPassword(body.password);
-    const newAdmin = new Admin({ ...body });
-    await newAdmin.save();
- return;
-
-}
-
-
 export const signup = async (req: Request, res: Response) => {
   try {
     const body = req.body;
@@ -101,9 +87,9 @@ export const deleteAdmin = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find()
-      .limit(req.params.limit ? +req.params.limit : 999999999)
+      .limit(req.params?.limit ? +req.params?.limit : 999999999)
       .sort({ createdAt: -1 })
-      .skip(req.params.skip ? +req.params.skip : 0);
+      .skip(req.params?.skip ? +req.params?.skip : 0);
     return res.json(SuccessResponse(users));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
@@ -127,22 +113,24 @@ export const getWithdrawalRequests = async (req: Request, res: Response) => {
 
 export const approveWithdrawalRequest = async (req: Request, res: Response) => {
   try {
-    const withdrawalRequest = await Transaction.findById(
-      req.params.id
-    ).populate("userId");
+    const withdrawalRequest = await Transaction.findById(req.params.id);
     if (!withdrawalRequest) {
       return res
         .status(400)
         .json(ErrorResponse("Withdrawal request not found"));
     }
-    
-
+    const user = await User.findById(withdrawalRequest.userId);
+    if (!user) {
+      return res
+        .status(400)
+        .json(ErrorResponse("User who made withdrawal request not found"));
+    }
     withdrawalRequest.status = "approved";
     // payout
-    req.user!.lastWithdrawal = withdrawalRequest.amount;
-    req.user!.pendingWithdrawal = 0;
+    user!.lastWithdrawal = withdrawalRequest.amount;
+    user!.pendingWithdrawal = 0;
     await withdrawalRequest.save();
-    await req.user!.save();
+    await user!.save();
     // Send the money to the user
     return res.json(SuccessResponse("Withdrawal request approved"));
   } catch (err) {
@@ -188,12 +176,19 @@ export const approveDepositRequest = async (req: Request, res: Response) => {
       return res.status(400).json(ErrorResponse("deposit request not found"));
     }
 
+    const user = await User.findById(depositRequest.userId);
+    if (!user) {
+      return res
+        .status(400)
+        .json(ErrorResponse("User who made withdrawal request not found"));
+    }
     depositRequest.status = "approved";
 
     // Send the money to the user
-    req.user!.lastDeposit = depositRequest.amount;
-    req.user!.activeDeposit = 0;
+    user!.lastDeposit = depositRequest.amount;
+    user!.activeDeposit = 0;
     await depositRequest.save();
+    await user.save();
     return res.json(SuccessResponse("deposit request approved"));
   } catch (err) {
     return res.status(400).json(ErrorResponse(err));
@@ -215,4 +210,27 @@ export const rejectDepositRequest = async (req: Request, res: Response) => {
   }
 };
 
-createAdmin()
+export const addToBalance = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findByIdAndUpdate(id);
+    if (!user) return res.status(400).json(ErrorResponse("User not found"));
+    user.totalBalance = user.totalBalance + req.body.amount;
+    await user.save();
+    return res.json(SuccessResponse(user));
+  } catch (error) {
+    return res.status(400).json(ErrorResponse(error));
+  }
+};
+export const removeFromBalance = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findByIdAndUpdate(id);
+    if (!user) return res.status(400).json(ErrorResponse("User not found"));
+    user.totalBalance = user.totalBalance - req.body.amount;
+    await user.save();
+    return res.json(SuccessResponse(user));
+  } catch (error) {
+    return res.status(400).json(ErrorResponse(error));
+  }
+};

@@ -53,7 +53,6 @@ export const getUserFromToken = async (req, res, next) => {
             if (decoded && decoded?.id) {
                 req.user = await User.findById(decoded.id);
             }
-            console.log(req.user, decoded);
         }
         return next();
     }

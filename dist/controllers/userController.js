@@ -100,7 +100,7 @@ export const getUserHistory = async (req, res) => {
                 {
                     id: 1,
                     type: "Deposit",
-                    method: "Bitcoin",
+                    currency: "Bitcoin",
                     amount: 1000,
                     status: "Success",
                     dummy: true,
@@ -110,7 +110,7 @@ export const getUserHistory = async (req, res) => {
                 {
                     id: 2,
                     type: "Withdrawal",
-                    method: "Etc",
+                    currency: "Etc",
                     amount: 1000,
                     status: "Success",
                     dummy: true,
