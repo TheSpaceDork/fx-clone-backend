@@ -33,11 +33,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-    // exposedHeaders: ["set-cookie"]
-  })
+  cors()
 );
 
 // body parser
@@ -52,11 +48,7 @@ app.use(cookies());
 // 3) ROUTES
 app.options(
   "*",
-  cors({
-    origin: "*",
-    credentials: true,
-    // exposedHeaders: ["set-cookie"]
-  })
+  cors()
 );
 app.use(getUserFromToken);
 app.use("/user", userRouter);
