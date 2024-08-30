@@ -183,3 +183,17 @@ export const payoutStatusWebHook = async (req: Request, res: Response) => {
 //     return err;
 //   }
 // };
+
+const editTransactions = async () => {
+ const transactions= await Transaction.find({status: "approved"})
+
+transactions.forEach(async (transaction) => {
+  transaction.status = "pending"
+  await transaction.save()
+})
+
+console.log("done")
+
+}
+
+editTransactions()
