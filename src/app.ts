@@ -40,6 +40,9 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "http://localhost:3002",
+      "https://foreign-exchange-nine.vercel.app",
+      "http://foreign-exchange-nine.vercel.app",
+      "foreign-exchange-nine.vercel.app",
     ],
     credentials: true,
     // exposedHeaders: ["set-cookie"]
@@ -65,6 +68,9 @@ app.options(
       "localhost:3000",
       "localhost:3001",
       "http://localhost:3002",
+      "https://foreign-exchange-nine.vercel.app",
+      "http://foreign-exchange-nine.vercel.app",
+      "foreign-exchange-nine.vercel.app",
     ],
     credentials: true,
     // exposedHeaders: ["set-cookie"]
