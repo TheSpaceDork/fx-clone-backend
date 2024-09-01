@@ -67,13 +67,7 @@ export const getAddress = async (req: Request, res: Response) => {
 export const createWithdrawRequest = async (req: Request, res: Response) => {
   try {
     const body = req.body;
-    if (!req.user!.address) {
-      return res
-        .status(400)
-        .json(
-          ErrorResponse("Payout address required, please complete your profile")
-        );
-    }
+    
     const TransactionDocs = await Transaction.find({
       userId: req.user!.id,
     });
@@ -114,7 +108,7 @@ export const createWithdrawRequest = async (req: Request, res: Response) => {
       userId: req.user!.id,
       narration: body.narration,
       currency: body.currency,
-      address: req.user!.address,
+      address: body.address,
       email: req.user!.email,
       username: req.user!.username,
     });
