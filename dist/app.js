@@ -8,6 +8,19 @@ import transactionRoute from "./routes/transactionRoutes.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
+const origin = {
+    origin: [
+        "localhost:3000",
+        "localhost:3001",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "https://foreign-exchange-nine.vercel.app",
+        "http://foreign-exchange-nine.vercel.app",
+        "foreign-exchange-nine.vercel.app",
+    ],
+    credentials: true,
+};
 const options = {
     definition: {
         openapi: "3.0.0",
@@ -28,17 +41,7 @@ const specs = swaggerJsDoc(options);
 const app = express();
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-app.use(cors({
-    origin: [
-        "localhost:3000",
-        "localhost:3001",
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:3002",
-    ],
-    credentials: true,
-    // exposedHeaders: ["set-cookie"]
-}));
+app.use(cors(origin));
 // body parser
 app.use(express.json({
     limit: "10mb",
@@ -46,17 +49,7 @@ app.use(express.json({
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookies());
 // 3) ROUTES
-app.options("*", cors({
-    origin: [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "localhost:3000",
-        "localhost:3001",
-        "http://localhost:3002",
-    ],
-    credentials: true,
-    // exposedHeaders: ["set-cookie"]
-}));
+app.options("*", cors(origin));
 app.use(getUserFromToken);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
