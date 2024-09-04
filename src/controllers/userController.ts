@@ -97,7 +97,6 @@ export const getUser = async (req: Request, res: Response) => {
 
     req.user.totalDeposit = totalDeposit;
     req.user.totalWithdrawal = totalWithdrawal;
-    req.user.totalBalance = totalDeposit - totalWithdrawal;
     await req.user.save();
 
     return res.status(StatusCodes.Success).json(SuccessResponse(req.user));
