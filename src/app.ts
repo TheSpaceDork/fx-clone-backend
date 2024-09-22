@@ -37,8 +37,8 @@ const specs = swaggerJsDoc(options);
 const app = express();
 
 
-app.use(cors());
-app.options("*", cors());
+app.use(cors(origin));
+app.options("*", cors(origin));
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
