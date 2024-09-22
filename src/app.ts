@@ -10,14 +10,8 @@ import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
 const origin = {
   origin: [
-    "localhost:3000",
-    "localhost:3001",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "https://foreign-exchange-nine.vercel.app",
-    "http://foreign-exchange-nine.vercel.app",
-    "foreign-exchange-nine.vercel.app",
+    /^(http:\/\/)?localhost:\d{1,5}$/,
+/^(http:\/\/|https:\/\/)?foreign-exchange-nine\.vercel\.app(:\d{1,5})?\/?.*$/,
     
   ],
   credentials: true,
