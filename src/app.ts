@@ -44,7 +44,7 @@ const app = express();
 
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-app.use(cors(origin));
+app.use(cors());
 
 // body parser
 app.use(
@@ -56,7 +56,7 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookies());
 
 // 3) ROUTES
-app.options("*", cors(origin));
+app.options("*", cors());
 app.use(getUserFromToken);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
