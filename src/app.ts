@@ -11,8 +11,8 @@ import morgan from "morgan";
 const origin = {
   origin: [
     /^(http:\/\/)?localhost:\d{1,5}$/,
-/^(http:\/\/|https:\/\/)?foreign-exchange-nine\.vercel\.app(:\d{1,5})?\/?.*$/,
-    
+    /^(http:\/\/|https:\/\/)?foreign-exchange-nine\.vercel\.app\/?.*$/,
+    /^(http:\/\/|https:\/\/)?(www\.)?keystonefx\.live\/?.*$/,
   ],
   credentials: true,
 };
@@ -36,12 +36,10 @@ const options = {
 const specs = swaggerJsDoc(options);
 const app = express();
 
-
 app.use(cors(origin));
 app.options("*", cors(origin));
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-
 
 // body parser
 app.use(
