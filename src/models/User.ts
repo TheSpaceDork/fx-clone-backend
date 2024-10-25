@@ -119,7 +119,6 @@ const userSchema = new Schema<IUser>(
     contact: {},
     dob: {
       type: Date,
-      default: "",
     },
     gender: {
       type: String,

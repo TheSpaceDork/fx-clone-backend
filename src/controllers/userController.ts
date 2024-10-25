@@ -78,21 +78,21 @@ export const getUser = async (req: Request, res: Response) => {
 
     const totalDeposit = TransactionDocs.reduce(
       (prev, curr) => {
-        if (curr.type === "deposit") {
+        if (curr?.type === "deposit") {
           return prev + curr.amount;
         }
         return prev;
       },
-      TransactionDocs[0].type === "deposit" ? TransactionDocs[0].amount : 0
+      TransactionDocs[0]?.type === "deposit" ? TransactionDocs[0].amount : 0
     );
     const totalWithdrawal = TransactionDocs.reduce(
       (prev, curr) => {
-        if (curr.type === "withdrawal") {
+        if (curr?.type === "withdrawal") {
           return prev + curr.amount;
         }
         return prev;
       },
-      TransactionDocs[0].type === "withdrawal" ? TransactionDocs[0].amount : 0
+      TransactionDocs[0]?.type === "withdrawal" ? TransactionDocs[0].amount : 0
     );
 
     req.user.totalDeposit = totalDeposit;
