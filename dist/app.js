@@ -10,14 +10,9 @@ import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
 const origin = {
     origin: [
-        "localhost:3000",
-        "localhost:3001",
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:3002",
-        "https://foreign-exchange-nine.vercel.app",
-        "http://foreign-exchange-nine.vercel.app",
-        "foreign-exchange-nine.vercel.app",
+        /^(http:\/\/)?localhost:\d{1,5}$/,
+        /^(http:\/\/|https:\/\/)?foreign-exchange-nine\.vercel\.app\/?.*$/,
+        /^(http:\/\/|https:\/\/)?(www\.)?keystonefx\.live\/?.*$/,
     ],
     credentials: true,
 };
@@ -39,9 +34,10 @@ const options = {
 };
 const specs = swaggerJsDoc(options);
 const app = express();
+app.use(cors(origin));
+app.options("*", cors(origin));
 app.use(morgan("dev"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-app.use(cors(origin));
 // body parser
 app.use(express.json({
     limit: "10mb",
@@ -49,7 +45,6 @@ app.use(express.json({
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookies());
 // 3) ROUTES
-app.options("*", cors(origin));
 app.use(getUserFromToken);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);

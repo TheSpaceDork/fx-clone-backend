@@ -87,7 +87,6 @@ const userSchema = new Schema({
     contact: {},
     dob: {
         type: Date,
-        default: new Date(1990),
     },
     gender: {
         type: String,
