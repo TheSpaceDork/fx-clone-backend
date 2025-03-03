@@ -27,7 +27,7 @@ const options = {
   },
   servers: [
     {
-      url: "https://fx-clone-backend-n7jd0aifj-thespacedorks-projects.vercel.app",
+      url: "https://fx-clone-backend.vercel.app/",
       description: "Live version",
     },
     { url: `http://localhost:6001`, description: "test" },
