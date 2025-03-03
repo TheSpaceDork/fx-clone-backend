@@ -25,7 +25,10 @@ const options = {
         },
     },
     servers: [
-        { url: "https://fx-xoxa.onrender.com", description: "Live version" },
+        {
+            url: "https://fx-clone-backend.vercel.app/",
+            description: "Live version",
+        },
         { url: `http://localhost:6001`, description: "test" },
     ],
     basePath: "/",
