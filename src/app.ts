@@ -12,6 +12,7 @@ const origin = {
   origin: [
     /^(http:\/\/)?localhost:\d{1,5}$/,
     /^(http:\/\/|https:\/\/)?foreign-exchange-nine\.vercel\.app\/?.*$/,
+    /^(http:\/\/|https:\/\/)?fx-clone-gamma\.vercel\.app\/?.*$/,
     /^(http:\/\/|https:\/\/)?(www\.)?keystonefx\.live\/?.*$/,
   ],
   credentials: true,
@@ -25,7 +26,10 @@ const options = {
     },
   },
   servers: [
-    { url: "https://fx-xoxa.onrender.com", description: "Live version" },
+    {
+      url: "https://fx-clone-backend-n7jd0aifj-thespacedorks-projects.vercel.app",
+      description: "Live version",
+    },
     { url: `http://localhost:6001`, description: "test" },
   ],
   basePath: "/",
