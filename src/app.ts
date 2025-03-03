@@ -8,15 +8,23 @@ import transactionRoute from "./routes/transactionRoutes.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
+
 const origin = {
   origin: [
-    /^(http:\/\/)?localhost:\d{1,5}$/,
-    /^(http:\/\/|https:\/\/)?foreign-exchange-nine\.vercel\.app\/?.*$/,
-    /^(http:\/\/|https:\/\/)?fx-clone-gamma\.vercel\.app\/?.*$/,
-    /^(http:\/\/|https:\/\/)?(www\.)?keystonefx\.live\/?.*$/,
+    /^(http:\/\/)?localhost:\d{1,5}$/, // Matches localhost with any port
+    /^(http:\/\/|https:\/\/)?fx-clone-gamma\.vercel\.app\/?.*$/, // Matches fx-clone-gamma.vercel.app
   ],
-  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allowed HTTP methods
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+  ], // Allowed headers
+  credentials: true, // Allow credentials (e.g., cookies)
+  maxAge: 86400, // Cache preflight requests for 24 hours
 };
+
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -34,32 +42,38 @@ const options = {
   ],
   basePath: "/",
   produces: ["application/json"],
-  apis: ["./dist/routes/*.js"], // files containing annotations as above
+  apis: ["./dist/routes/*.js"], // Files containing annotations
 } as swaggerJsDoc.Options;
 
 const specs = swaggerJsDoc(options);
 const app = express();
 
+// Enable CORS with the specified configuration
 app.use(cors(origin));
-app.options("*", cors(origin));
+app.options("*", cors(origin)); // Enable preflight requests for all routes
+
+// Logging middleware
 app.use(morgan("dev"));
+
+// Swagger documentation
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
-// body parser
-app.use(
-  express.json({
-    limit: "10mb",
-  })
-);
+// Body parser
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// Cookie parser
 app.use(cookies());
 
-// 3) ROUTES
-
+// Middleware to get user from token
 app.use(getUserFromToken);
+
+// Routes
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/transaction", transactionRoute);
+
+// Catch-all route
 app.all("*", (req, res, next) => {
   return res.json("You've reached the backend");
 });
