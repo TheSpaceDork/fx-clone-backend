@@ -5,8 +5,7 @@ import userRouter from "./routes/userRoutes.js";
 import { getUserFromToken } from "./utils/jwt.js";
 import adminRouter from "./routes/adminRoutes.js";
 import transactionRoute from "./routes/transactionRoutes.js";
-import swaggerUI from "swagger-ui-express";
-import swaggerJsDoc from "swagger-jsdoc";
+
 import morgan from "morgan";
 
 const origin = {
@@ -25,42 +24,34 @@ const origin = {
   maxAge: 86400, // Cache preflight requests for 24 hours
 };
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "FX",
-      version: "1.0.0",
-    },
-  },
-  servers: [
-    {
-      url: "https://fx-clone-backend.onrender.com",
-      description: "Live version",
-    },
-    { url: `http://localhost:6001`, description: "test" },
-  ],
-  basePath: "/",
-  produces: ["application/json"],
-  apis: ["./dist/routes/*.js"], // Files containing annotations
-} as swaggerJsDoc.Options;
-
-const specs = swaggerJsDoc(options);
 const app = express();
 
-// Enable CORS with the specified configuration
-app.use(cors(origin));
-app.options("*", cors(origin)); // Enable preflight requests for all routes
+app.use(
+  cors({
+    origin: [
+      /^(http:\/\/)?localhost:\d{1,5}$/,
+      /^(http:\/\/|https:\/\/)?(www\.)?fx-clone-gamma\.vercel\.app\/?.*$/,
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
+    credentials: true,
+    maxAge: 86400, // 24 hours
+  })
+);
 
 // Logging middleware
 app.use(morgan("dev"));
 
 // Swagger documentation
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 // Body parser
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use(express.urlencoded({ extended: true }));
 
 // Cookie parser
 app.use(cookies());
