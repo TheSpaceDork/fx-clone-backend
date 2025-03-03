@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { Types } from "mongoose";
 import { StatusCodes, ErrorResponse } from "./response.js";
 import User from "../models/User.js";
-// import ms from "ms"
+// import ms from "mss"
 
 export const signToken = (id: Types.ObjectId, res: Response) => {
   const accessToken = jwt.sign({ id }, process.env.JWT_ACCESS_SECRET!, {
