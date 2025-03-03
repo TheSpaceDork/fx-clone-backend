@@ -9,10 +9,11 @@ import transactionRoute from "./routes/transactionRoutes.js";
 import morgan from "morgan";
 
 const origin = {
-  origin: [
-    /^(http:\/\/)?localhost:\d{1,5}$/, // Matches localhost with any port
-    /^(http:\/\/|https:\/\/)?fx-clone-gamma\.vercel\.app\/?.*$/, // Matches fx-clone-gamma.vercel.app
-  ],
+  origin: true,
+  //   [
+  //   /^(http:\/\/)?localhost:\d{1,5}$/, // Matches localhost with any port
+  //   /^(http:\/\/|https:\/\/)?fx-clone-gamma\.vercel\.app\/?.*$/, // Matches fx-clone-gamma.vercel.app
+  // ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allowed HTTP methods
   allowedHeaders: [
     "Content-Type",
