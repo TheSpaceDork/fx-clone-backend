@@ -15,18 +15,7 @@ app.use(morgan("dev"));
 // CORS configuration
 app.use(
   cors({
-    origin: (origin, callback) => {
-      console.log("Incoming origin:", origin);
-      const allowedOrigins = [
-        "https://fx-clone-gamma.vercel.app",
-        "http://localhost:3000",
-      ];
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://fx-clone-gamma.vercel.app/",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Fixed typo: "OPTIONS" instead of "OPTIONS"
     allowedHeaders: [
       "Content-Type",
