@@ -9,6 +9,8 @@ import transactionRoute from "./routes/transactionRoutes.js";
 import morgan from "morgan";
 
 const app = express();
+// Logging middleware
+app.use(morgan("dev"));
 
 app.use(
   cors({
@@ -44,9 +46,6 @@ app.use(
 
 // Handle preflight requests for all routes
 app.options("*", cors());
-
-// Logging middleware
-app.use(morgan("dev"));
 
 // Swagger documentation
 
