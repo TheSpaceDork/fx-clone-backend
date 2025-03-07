@@ -12,18 +12,19 @@ const app = express();
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      console.log("Incoming origin:", origin);
-      const allowedOrigins = [
-        "https://fx-clone-gamma.vercel.app/",
-        "http://localhost:3000",
-      ];
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "*",
+    //   (origin, callback) => {
+    //   console.log("Incoming origin:", origin);
+    //   const allowedOrigins = [
+    //     "https://fx-clone-gamma.vercel.app/",
+    //     "http://localhost:3000",
+    //   ];
+    //   if (!origin || allowedOrigins.includes(origin)) {
+    //     callback(null, true);
+    //   } else {
+    //     callback(new Error("Not allowed by CORS"));
+    //   }
+    // },
     // origin: true,
     //   [
     //   /^(http:\/\/)?localhost:\d{1,5}$/,
