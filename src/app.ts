@@ -12,7 +12,7 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: "https://fx-clone-gamma.vercel.app/",
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
