@@ -9,14 +9,11 @@ import morgan from "morgan";
 
 const app = express();
 
-// Logging middleware
-app.use(morgan("dev"));
-
 // CORS configuration
 app.use(
   cors({
     origin: "https://fx-clone-gamma.vercel.app/",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Fixed typo: "OPTIONS" instead of "OPTIONS"
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",
@@ -30,7 +27,8 @@ app.use(
 
 // Handle preflight requests for all routes
 app.options("*", cors());
-
+// Logging middleware
+app.use(morgan("dev"));
 // Body parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
