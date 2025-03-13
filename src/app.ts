@@ -9,14 +9,26 @@ import morgan from "morgan";
 
 const app = express();
 
-// CORS configuration
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://fx-clone-gamma.vercel.app",
+  "https://keystonefx.live",
+];
+
 app.use(
   cors({
-    origin: [
-      /^(http:\/\/)?localhost:\d{1,5}$/,
-      /^(http:\/\/|https:\/\/)?fx-clone-gamma\.vercel\.app\/?.*$/,
-      /^(http:\/\/|https:\/\/)?(www\.)?keystonefx\.live\/?.*$/,
-    ],
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:3000",
+        "https://fx-clone-gamma.vercel.app",
+        "https://keystonefx.live",
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
@@ -29,26 +41,18 @@ app.use(
   })
 );
 
-// Handle preflight requests for all routes
 app.options("*", cors());
-// Logging middleware
+
 app.use(morgan("dev"));
-// Body parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-
-// Cookie parser
 app.use(cookies());
-
-// Middleware to get user from token
 app.use(getUserFromToken);
 
-// Routes
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/transaction", transactionRoute);
 
-// Catch-all route
 app.all("*", (req, res, next) => {
   return res.json("You've reached the backend");
 });

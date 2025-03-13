@@ -5,49 +5,38 @@ import userRouter from "./routes/userRoutes.js";
 import { getUserFromToken } from "./utils/jwt.js";
 import adminRouter from "./routes/adminRoutes.js";
 import transactionRoute from "./routes/transactionRoutes.js";
-import swaggerUI from "swagger-ui-express";
-import swaggerJsDoc from "swagger-jsdoc";
 import morgan from "morgan";
-const origin = {
-    origin: [
-        /^(http:\/\/)?localhost:\d{1,5}$/,
-        /^(http:\/\/|https:\/\/)?foreign-exchange-nine\.vercel\.app\/?.*$/,
-        /^(http:\/\/|https:\/\/)?(www\.)?keystonefx\.live\/?.*$/,
+const app = express();
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://fx-clone-gamma.vercel.app",
+    "https://keystonefx.live",
+];
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+        "Accept",
     ],
     credentials: true,
-};
-const options = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "FX",
-            version: "1.0.0",
-        },
-    },
-    servers: [
-        {
-            url: "https://fx-clone-backend.vercel.app/",
-            description: "Live version",
-        },
-        { url: `http://localhost:6001`, description: "test" },
-    ],
-    basePath: "/",
-    produces: ["application/json"],
-    apis: ["./dist/routes/*.js"], // files containing annotations as above
-};
-const specs = swaggerJsDoc(options);
-const app = express();
-app.use(cors(origin));
-app.options("*", cors(origin));
-app.use(morgan("dev"));
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-// body parser
-app.use(express.json({
-    limit: "10mb",
+    maxAge: 86400, // 24 hours
 }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.options("*", cors());
+app.use(morgan("dev"));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookies());
-// 3) ROUTES
 app.use(getUserFromToken);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
