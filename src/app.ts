@@ -12,7 +12,11 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: true,
+    origin: [
+      /^(http:\/\/)?localhost:\d{1,5}$/,
+      /^(http:\/\/|https:\/\/)?fx-clone-gamma\.vercel\.app\/?.*$/,
+      /^(http:\/\/|https:\/\/)?(www\.)?keystonefx\.live\/?.*$/,
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
